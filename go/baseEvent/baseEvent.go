@@ -22,7 +22,7 @@ import (
   "strconv"
   "strings"
   "reflect"
-  "github.com/gerhardusmuller/txProc/utils"
+  "github.com/gerhardusmuller/txProc/go/utils"
   )
 
 type EEventType int

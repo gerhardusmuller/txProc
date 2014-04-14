@@ -1,0 +1,3 @@
+PJAPREFIX := i686-pc
+BOOSTLIBS := -lboost_program_options-gcc41-mt-1_36 -lboost_regex-gcc41-mt-1_36
+#EXTRA_FLAGS := -DPPOLL_NOT_AVAILABLE

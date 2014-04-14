@@ -1,0 +1,2 @@
+EXTRA_FLAGS := -DPLATFORM_MAC
+LIBPATHS := -L/opt/local/lib

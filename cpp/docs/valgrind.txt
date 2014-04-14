@@ -1,0 +1,4 @@
+valgrind --leak-check=full --show-reachable=yes ./txProc 2>&1 | tee t.txt
+perl -e 'if( `ps ax | grep "valgrind "` =~ /^\s?(\d+).+\d:\d\d valgrind /) {print "killing $1\n"; print `kill $1`}'
+
+

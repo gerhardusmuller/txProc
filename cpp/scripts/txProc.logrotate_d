@@ -1,0 +1,16 @@
+/var/log/txProc/*.log {
+    compress
+    delaycompress
+    daily
+    nodateext
+    olddir oldlogs
+    rotate 30
+    missingok
+    create 644 uucp users
+    sharedscripts
+    postrotate
+     kill -USR2 `cat /var/run/txProc.pid`
+    /usr/local/bin/logArchive.pl /var/log/txProc/oldlogs /share/archive/backups txProc '*.2.{gz,bz2}'
+    endscript
+}
+

@@ -1,0 +1,117 @@
+12 January 2009
+================
+
+TBD events will still be implemented or not.  Run by:
+
+./test.pl -tnnn  where nnn is the test number.
+
+The completely automated tests always finish with a line:
+
+testSubnn: overall result: 0
+
+If the return value is not 0 please scan up through the screen output for an error.
+
+Fully automated tests are:
+./test.pl -t1
+./test.pl -t2
+./test.pl -t3
+./test.pl -t4
+./test.pl -t100
+./test.pl -t101
+# gvim genEvents102.cfg and change the ip = fields or insert 'testhost' into the hosts file
+./test.pl -t102
+
+Part automated tests are:
+./test.pl -t103
+./test.pl -t104
+./test.pl -t104a
+./test.pl -t107
+./test.pl -t108
+./test.pl -t109
+
+To run the tests as an underpriviledged user:
+export testUser=gerhardus
+sudo touch /var/run/txDelta.pid
+sudo chown $testUser /var/run/txDelta.pid
+sudo touch /var/run/genEvents.pid
+sudo chown $testUser /var/run/txDelta.pid
+sudo touch /var/log/genEvents.log
+sudo chown $testUser /var/log/genEvents.log
+# change the mserver port to above 1024
+vim /etc/services
+
+txDelta - carbon copy of the telcoServe testting
+==========
+1   basic startup / shutdown / kill procedures
+      starts up the socket and dispatcher with 3 queues
+
+2   restarting of children that have died
+      only uses the dispatcher for this test
+
+3   verify that the stats timer is running
+      requires access to a php/database combination for getMSN queries
+
+4   check logs for errors - intended to be a production maintenance tool
+      checks for defunct processes
+
+5   verify that the stats is produced - can be a live test
+    TBD
+
+6   verify proper priviledges
+    TBD - dispatcher dropPriviledge: not running as root, cannot drop priviledge
+          init: failed to drop priviledges to user
+
+7   verify operational processes with conf file - intended as a production tool
+    TBD - queues, workers, no log errors, timers and warning if not configured
+
+
+Dispatcher
+==========
+100   startup of queues with workers - different queues with different no of workers
+        starts up the socket and dispatcher with 3 queues
+
+101   loading of queues with different work loads - events should go to the 
+      appropriate queue.  verify the reported stats. compute rates of processing and
+      queue statistics
+
+102   overloading of a queue should cause a recovery dump
+      dynamic adjustment of queue lengths
+      define 'testhost' in /etc/hosts as genEvents uses tcp to submit events with
+
+103   increasing and decreasing the number of workers while a queue is under load
+
+104   verification of the delay queue
+
+104a  verification of the delay queue recovery events
+      recover using txDeltaRecover.pl -vr -f /var/log/txDelta/recovery.logXXX
+      
+105   graceful shutdown of a queue under load plus subsequent recovery
+      test does not exist but results verified in other tests
+
+106   verification of recovery events - generates a number of events of which a 
+      certain percentage fail and land in the recovery log
+      verified txDeltaRecover.pl by hand
+      verify ./txDelta -N -r /var/log/txDelta/recovery.log
+
+107   verification of recovery script - no test
+      verified txDeltaRecover.pl by hand
+
+108   verification of maintenance timer and event expiry times
+
+109   verification of max execution times and the adjustment thereof
+      update of max execution time
+      presents the extracted log lines for inspection
+
+110   verify no memory leaks
+      uses valgrind and a manual inspection of its output - please compile with -O0
+
+Socket
+======
+150   submission of events via tcp and unix domain sockets
+      The above tests all use unix domain sockets with the exception of 102
+      which uses TCP and therefor requires the 'testhost' hosts entry
+
+Other
+=====
+200   benchmarking of the getMSN query
+

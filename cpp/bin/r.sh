@@ -1,0 +1,1 @@
+echo >/var/log/faxout/faxoutProc.state.json; echo >/var/log/txProc/nucleus.log; echo >/var/log/faxout/faxoutProc.log; echo >/var/log/faxout/convertTextEtAl.log; echo >/var/log/faxout/pdf.log; echo >/var/log/faxout/parseFaxMail.log; ./txProc

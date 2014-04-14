@@ -1,0 +1,453 @@
+{
+   boost1
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs4_Rep8_M_cloneERKSaIcEm
+   fun:_ZNSsC1ERKSs
+   fun:_ZN5boost15program_options8validateERNS_3anyERKSt6vectorISsSaISsEEPSsi
+   fun:_ZNK5boost15program_options11typed_valueISscE6xparseERNS_3anyERKSt6vectorISsSaISsEE
+   fun:_ZNK5boost15program_options29value_semantic_codecvt_helperIcE5parseERNS_3anyERKSt6vectorISsSaISsEEb
+   fun:_ZN5boost15program_options5storeERKNS0_20basic_parsed_optionsIcEERNS0_13variables_mapEb
+   fun:_ZN7options12parseOptionsEiPPc
+   fun:main
+}
+{
+   boost2
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNK5boost15program_options13untyped_value6xparseERNS_3anyERKSt6vectorISsSaISsEE
+   fun:_ZNK5boost15program_options29value_semantic_codecvt_helperIcE5parseERNS_3anyERKSt6vectorISsSaISsEEb
+   fun:_ZN5boost15program_options5storeERKNS0_20basic_parsed_optionsIcEERNS0_13variables_mapEb
+   fun:_ZN7options12parseOptionsEiPPc
+   fun:main
+}
+{
+   boost3
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN5boost15program_options29options_description_easy_initclEPKcS3_
+   fun:_ZN7options12parseOptionsEiPPc
+   fun:main
+}
+{
+   boost4
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSt8_Rb_treeISsSsSt9_IdentityISsESt4lessISsESaISsEE9_M_insertEPSt18_Rb_tree_node_baseS7_RKSs
+   fun:_ZNSt8_Rb_treeISsSsSt9_IdentityISsESt4lessISsESaISsEE16_M_insert_uniqueESt17_Rb_tree_iteratorISsERKSs
+   fun:_ZN5boost15program_options5storeERKNS0_20basic_parsed_optionsIcEERNS0_13variables_mapEb
+   fun:_ZN7options12parseOptionsEiPPc
+   fun:main
+}
+{
+   boost5
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSt8_Rb_treeISsSsSt9_IdentityISsESt4lessISsESaISsEE16_M_insert_uniqueERKSs
+   fun:_ZNSt8_Rb_treeISsSsSt9_IdentityISsESt4lessISsESaISsEE16_M_insert_uniqueESt17_Rb_tree_iteratorISsERKSs
+   fun:_ZN5boost15program_options5storeERKNS0_20basic_parsed_optionsIcEERNS0_13variables_mapEb
+   fun:_ZN7options12parseOptionsEiPPc
+   fun:main
+}
+{
+   boost6
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSt8_Rb_treeISsSsSt9_IdentityISsESt4lessISsESaISsEE14_M_create_nodeERKSs
+   fun:_ZNSt8_Rb_treeISsSsSt9_IdentityISsESt4lessISsESaISsEE16_M_insert_uniqueERKSs
+   fun:_ZNSt8_Rb_treeISsSsSt9_IdentityISsESt4lessISsESaISsEE16_M_insert_uniqueESt17_Rb_tree_iteratorISsERKSs
+   fun:_ZN5boost15program_options5storeERKNS0_20basic_parsed_optionsIcEERNS0_13variables_mapEb
+   fun:_ZN7options12parseOptionsEiPPc
+   fun:main
+}
+{
+   boost7
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNK5boost3any6holderIiE5cloneEv
+   fun:_ZN5boost3anyC1ERKS0_
+   fun:_ZN5boost3anyaSERKS0_
+   fun:_ZN5boost15program_options11typed_valueIicE13default_valueERKi
+   fun:_ZN7options12parseOptionsEiPPc
+   fun:main
+}
+{
+   boost8
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNK5boost3any6holderISsE5cloneEv
+   fun:_ZN5boost3anyC1ERKS0_
+   fun:_ZN5boost3anyaSERKS0_
+   fun:_ZN5boost15program_options11typed_valueISscE13default_valueERKSs
+   fun:_ZN7options12parseOptionsEiPPc
+   fun:main
+}
+{
+   boost9
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN5boost15program_options18option_descriptionC1EPKcPKNS0_14value_semanticES3_
+   fun:_ZN5boost15program_options29options_description_easy_initclEPKcS3_
+   fun:_ZN7options12parseOptionsEiPPc
+   fun:main
+}
+{
+   boost10
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN5boost15program_options5valueIiEEPNS0_11typed_valueIT_cEEPS3_
+   fun:_ZN7options12parseOptionsEiPPc
+   fun:main
+}
+{
+   boost11
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN5boost15program_options5valueISsEEPNS0_11typed_valueIT_cEEPS3_
+   fun:_ZN7options12parseOptionsEiPPc
+   fun:main
+}
+{
+   boost12
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsN5boost15program_options14variable_valueEESt10_Select1stIS5_ESt4lessISsESaIS5_EE9_M_insertEPSt18_Rb_tree_node_baseSD_RKS5_
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsN5boost15program_options14variable_valueEESt10_Select1stIS5_ESt4lessISsESaIS5_EE16_M_insert_uniqueERKS5_
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsN5boost15program_options14variable_valueEESt10_Select1stIS5_ESt4lessISsESaIS5_EE16_M_insert_uniqueESt17_Rb_tree_iteratorIS5_ERKS5_
+   fun:_ZNSt3mapISsN5boost15program_options14variable_valueESt4lessISsESaISt4pairIKSsS2_EEEixERS6_
+   fun:_ZN5boost15program_options5storeERKNS0_20basic_parsed_optionsIcEERNS0_13variables_mapEb
+   fun:_ZN7options12parseOptionsEiPPc
+   fun:main
+}
+{
+   boost13
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNK5boost3any6holderIjE5cloneEv
+   fun:_ZN5boost3anyC1ERKS0_
+   fun:_ZN5boost3anyaSERKS0_
+   fun:_ZN5boost15program_options11typed_valueIjcE13default_valueERKj
+   fun:_ZN17optionsDispatcher12parseOptionsEiPPc
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   boost14
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN5boost15program_options5valueIjEEPNS0_11typed_valueIT_cEEPS3_
+   fun:_ZN17optionsDispatcher12parseOptionsEiPPc
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+
+{
+   loggerCleanup
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs9_M_mutateEmmm
+   fun:_ZNSs15_M_replace_safeEmmPKcm
+   fun:_ZN6logger4initEPKcN10loggerDefs9eLogLevelE
+   fun:_ZN6loggerC1EPKcN10loggerDefs9eLogLevelE
+   fun:_ZN6logger11getInstanceEPKc
+   fun:_ZN7optionsC1Ev
+   fun:main
+}
+{
+   unixSocket_initPoll
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZN10unixSocket8initPollEi
+   fun:_ZN7txDelta4initEv
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   pRecSock_in_main
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN7txDelta4initEv
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   pSignalSock_in_main
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN7txDelta4initEv
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   logger::getInstance_in_options_in_main
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN6logger11getInstanceEPKc
+   fun:_ZN7optionsC1Ev
+   fun:main
+}
+{
+   theServer = new txDelta( argc, argv )
+   Memcheck:Leak
+   fun:_Znwm
+   fun:main
+}
+{
+   pOptions = new options
+   Memcheck:Leak
+   fun:_Znwm
+   fun:main
+}
+{
+   recoveryLog.cpp:72
+   Memcheck:Leak
+   fun:malloc
+   obj:/lib64/libc-2.6.1.so
+   fun:_ZNSt12__basic_fileIcE4openEPKcSt13_Ios_Openmodei
+   fun:_ZNSt13basic_filebufIcSt11char_traitsIcEE4openEPKcSt13_Ios_Openmode
+   fun:_ZNSt14basic_ofstreamIcSt11char_traitsIcEE4openEPKcSt13_Ios_Openmode
+   fun:_ZN11recoveryLogC1EPKcbRKSsS3_S3_i
+   fun:_ZN7txDelta4initEv
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   dispatcher.cpp:304
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISt13_Rb_tree_nodeISt4pairIKSsP10eventQueueEEE8allocateEmPKv
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsP10eventQueueESt10_Select1stIS4_ESt4lessISsESaIS4_EE11_M_get_nodeEv
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsP10eventQueueESt10_Select1stIS4_ESt4lessISsESaIS4_EE14_M_create_nodeERKS4_
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsP10eventQueueESt10_Select1stIS4_ESt4lessISsESaIS4_EE9_M_insertEPSt18_Rb_tree_node_baseSC_RKS4_
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsP10eventQueueESt10_Select1stIS4_ESt4lessISsESaIS4_EE16_M_insert_uniqueERKS4_
+   fun:_ZNSt3mapISsP10eventQueueSt4lessISsESaISt4pairIKSsS1_EEE6insertERKS6_
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   logger::getTimestamp()dispatchEvent.cpp:27
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZN6logger12getTimestampEv
+   fun:_ZN6logger4initEPKcN10loggerDefs9eLogLevelE
+   fun:_ZN6loggerC1EPKcN10loggerDefs9eLogLevelE
+   fun:_Z41__static_initialization_and_destruction_0ii
+   fun:_GLOBAL__I__ZN13dispatchEvent8SER_NAMEE
+   obj:/home/gerhardus/projects/faxFx2/telcoIf/txDelta/bin/txDelta
+   obj:/home/gerhardus/projects/faxFx2/telcoIf/txDelta/bin/txDelta
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   eventQueue::createChild() (eventQueue.cpp:117
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISt13_Rb_tree_nodeISt4pairIKiP16workerDescriptorEEE8allocateEmPKv
+   fun:_ZNSt8_Rb_treeIiSt4pairIKiP16workerDescriptorESt10_Select1stIS4_ESt4lessIiESaIS4_EE11_M_get_nodeEv
+   fun:_ZNSt8_Rb_treeIiSt4pairIKiP16workerDescriptorESt10_Select1stIS4_ESt4lessIiESaIS4_EE14_M_create_nodeERKS4_
+   fun:_ZNSt8_Rb_treeIiSt4pairIKiP16workerDescriptorESt10_Select1stIS4_ESt4lessIiESaIS4_EE9_M_insertEPSt18_Rb_tree_node_baseSC_RKS4_
+   fun:_ZNSt8_Rb_treeIiSt4pairIKiP16workerDescriptorESt10_Select1stIS4_ESt4lessIiESaIS4_EE16_M_insert_uniqueERKS4_
+   fun:_ZNSt3mapIiP16workerDescriptorSt4lessIiESaISt4pairIKiS1_EEE6insertERKS6_
+   fun:_ZN10eventQueue11createChildEv
+   fun:_ZN10eventQueue4initEv
+   fun:_ZN10eventQueueC1ERKSsjijP11recoveryLogbiPKc
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+}
+{
+   recoveryLog::recoveryLog(recoveryLog.cpp:72)
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZNSt13basic_filebufIcSt11char_traitsIcEE27_M_allocate_internal_bufferEv
+   fun:_ZNSt13basic_filebufIcSt11char_traitsIcEE4openEPKcSt13_Ios_Openmode
+   fun:_ZNSt14basic_ofstreamIcSt11char_traitsIcEE4openEPKcSt13_Ios_Openmode
+   fun:_ZN11recoveryLogC1EPKcbRKSsS3_S3_i
+   fun:_ZN7txDelta4initEv
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   dispatcher::init(int*, int) (dispatcher.cpp:282) new tQueueDescriptor
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   eventQueue::eventQueue() (eventQueue.cpp:46)
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorIPiE8allocateEmPKv
+   fun:_ZNSt11_Deque_baseIiSaIiEE15_M_allocate_mapEm
+   fun:_ZNSt11_Deque_baseIiSaIiEE17_M_initialize_mapEm
+   fun:_ZNSt11_Deque_baseIiSaIiEEC2ERKS0_m
+   fun:_ZNSt5dequeIiSaIiEEC1ERKS0_
+   fun:_ZN10eventQueueC1ERKSsjijP11recoveryLogbiPKc
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   eventQueue::eventQueue() (eventQueue.cpp:46)
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorIPP13dispatchEventE8allocateEmPKv
+   fun:_ZNSt11_Deque_baseIP13dispatchEventSaIS1_EE15_M_allocate_mapEm
+   fun:_ZNSt11_Deque_baseIP13dispatchEventSaIS1_EE17_M_initialize_mapEm
+   fun:_ZNSt11_Deque_baseIP13dispatchEventSaIS1_EEC2ERKS2_m
+   fun:_ZNSt5dequeIP13dispatchEventSaIS1_EEC1ERKS2_
+   fun:_ZN10eventQueueC1ERKSsjijP11recoveryLogbiPKc
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   txDelta::forkDispatcher(bool) (txDelta.cpp:748)
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   workerDescriptor::workerDescriptor() (workerDescriptor.cpp:52)
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN16workerDescriptorC1EP11recoveryLogbiiPPc
+   fun:_ZN10eventQueue11createChildEv
+   fun:_ZN10eventQueue4initEv
+   fun:_ZN10eventQueueC1ERKSsjijP11recoveryLogbiPKc
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   optionsDispatcher::parseOptions(int, char**) (optionsDispatcher.cpp:140)
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISt13_Rb_tree_nodeISt4pairIKSsSsEEE8allocateEmPKv
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsSsESt10_Select1stIS2_ESt4lessISsESaIS2_EE11_M_get_nodeEv
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsSsESt10_Select1stIS2_ESt4lessISsESaIS2_EE14_M_create_nodeERKS2_
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsSsESt10_Select1stIS2_ESt4lessISsESaIS2_EE9_M_insertEPSt18_Rb_tree_node_baseSA_RKS2_
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsSsESt10_Select1stIS2_ESt4lessISsESaIS2_EE16_M_insert_uniqueERKS2_
+   fun:_ZNSt3mapISsSsSt4lessISsESaISt4pairIKSsSsEEE6insertERKS4_
+   fun:_ZN17optionsDispatcher12parseOptionsEiPPc
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+}
+{
+   eventQueue::createChild() (eventQueue.cpp:112)
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN10eventQueue11createChildEv
+   fun:_ZN10eventQueue4initEv
+   fun:_ZN10eventQueueC1ERKSsjijP11recoveryLogbiPKc
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   dispatcher::init(int*, int) (dispatcher.cpp:300)
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   dispatcher::init(int*, int) (dispatcher.cpp:298)
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   dispatcher::init(int*, int) (dispatcher.cpp:228)
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+   fun:main
+}
+{
+   curl_global_init (in /usr/lib64/libcurl.so.4.0.0)
+   Memcheck:Leak
+   fun:malloc
+   fun:CRYPTO_malloc
+   fun:ENGINE_new
+   fun:ENGINE_load_dynamic
+   obj:/usr/lib64/libcurl.so.4.0.0
+   fun:curl_global_init
+   fun:_ZN6cURLpp10initializeEl
+   fun:_ZN6cURLpp7CleanupC1Ev
+   fun:_ZN10urlRequestC1EiRKSsS1_S1_S1_S1_
+   fun:_ZN6worker4mainEv
+   fun:_ZN16workerDescriptor9forkChildEv
+   fun:_ZN10eventQueue11createChildEv
+}
+{
+   dispatcher::init(int*, int) (dispatcher.cpp:298)
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorIP13dispatchEventE8allocateEmPKv
+   fun:_ZNSt11_Deque_baseIP13dispatchEventSaIS1_EE16_M_allocate_nodeEv
+   fun:_ZNSt11_Deque_baseIP13dispatchEventSaIS1_EE15_M_create_nodesEPPS1_S5_
+   fun:_ZNSt11_Deque_baseIP13dispatchEventSaIS1_EE17_M_initialize_mapEm
+   fun:_ZNSt11_Deque_baseIP13dispatchEventSaIS1_EEC2ERKS2_m
+   fun:_ZNSt5dequeIP13dispatchEventSaIS1_EEC1ERKS2_
+   fun:_ZN10eventQueueC1ERKSsjijP11recoveryLogbiPKc
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+}
+{
+   eventQueue::eventQueue() (eventQueue.cpp:46)
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorIiE8allocateEmPKv
+   fun:_ZNSt11_Deque_baseIiSaIiEE16_M_allocate_nodeEv
+   fun:_ZNSt11_Deque_baseIiSaIiEE15_M_create_nodesEPPiS3_
+   fun:_ZNSt11_Deque_baseIiSaIiEE17_M_initialize_mapEm
+   fun:_ZNSt11_Deque_baseIiSaIiEEC2ERKS0_m
+   fun:_ZNSt5dequeIiSaIiEEC1ERKS0_
+   fun:_ZN10eventQueueC1ERKSsjijP11recoveryLogbiPKc
+   fun:_ZN10dispatcher4initEPii
+   fun:_ZN10dispatcherC1EPiiP11recoveryLogbiPPc
+   fun:_ZN7txDelta14forkDispatcherEb
+   fun:_ZN7txDelta4mainEv
+}
+

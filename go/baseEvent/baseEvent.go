@@ -17,12 +17,13 @@ import (
   "fmt"
   "net"
   "errors"
+  "io"
   "io/ioutil"
   "encoding/json"
   "strconv"
   "strings"
   "reflect"
-  "github.com/gerhardusmuller/txProc/go/utils"
+  . "github.com/gerhardusmuller/txProc/go/utils"
   )
 
 type EEventType int
@@ -593,9 +594,9 @@ func (s *BaseEvent) GetParamAsFloat( name string ) (float32,error) {
 
 //bool existsParam( const char* name )
 //void deleteParam( const char* name )
-func (s *BaseEvent) ExistsParam( name string ) (bool,error) {
+func (s *BaseEvent) ExistsParam( name string ) (bool) {
   _,ok:=s.execParams[name]
-  return ok,nil
+  return ok
 } // BaseEvent ExistsParam
 func (s *BaseEvent) DeleteParam( name string ) error {
   delete( s.execParams, name )
@@ -674,6 +675,31 @@ func (s *BaseEvent) GetScriptParamAsFloat( i int ) (float32,error) {
 } // BaseEvent GetScriptParamAsFloat
 
 /**
+ * serialises to txProc via UD sockets.  it requires a datagram and stream socket and auto selects the
+ * stream socket for messages greater than READ_BUF_SIZE.  it does not support reading replies
+ * **/
+func (s *BaseEvent) SerialiseToTxProc( connDatagram, connStream *net.UnixConn ) (int,error) {
+  var retVal int
+  packet,err := s.SerialiseToString()
+  if err != nil { return retVal,err }
+
+  var numWritten int
+  if len(packet) > READ_BUF_SIZE {
+    numWritten,err = connStream.Write( []byte(packet) )
+  } else {
+    numWritten,err = connDatagram.Write( []byte(packet) )
+  } // else
+  if err!=nil || numWritten != len(packet) {
+    Log.Printf( "WARN SerialiseToTxProc wrote %d of %d bytes - err:", numWritten, len(packet), err ) 
+    retVal = 0
+  } else {
+    retVal = 1
+  } // else
+
+  return retVal,err
+} // BaseEvent SerialiseToTxProc
+
+/**
  * serialises to a socket
  * retVal is 0 for an error, 1 for no response and 2 for a response - one of RESULT_ERR, RESULT_OK, RESULT_RESPONSE
  * **/
@@ -682,15 +708,15 @@ func (s *BaseEvent) SerialiseToSocket( conn net.Conn ) (int,error) {
   // identify the type of conn - this should preferably be done comparing the types directly but how to compare
   // when we have pointer types ..
   bStreamSocket := false
-  if reflect.TypeOf(conn).String()=="*net.TCPConn" { bStreamSocket = true }
+  if reflect.TypeOf(conn).String()=="*net.TCPConn" || reflect.TypeOf(conn).String()=="*net.UnixConn" { bStreamSocket = true }
 
   packet,err := s.SerialiseToString()
   if err != nil { return retVal,err }
   
   var numWritten int
   numWritten,err = conn.Write( []byte(packet) )
-  if numWritten != len(packet) { appLogger.Log.Printf( "WARN SerialiseToSocket wrote %d of %d bytes", numWritten, len(packet) ) }
-  appLogger.Log.Printf( "debug SerialiseToSocket wrote %d of %d bytes bStreamSocket:%v", numWritten, len(packet), bStreamSocket )
+  if numWritten != len(packet) { Log.Printf( "WARN SerialiseToSocket wrote %d of %d bytes", numWritten, len(packet) ) }
+  Log.Printf( "debug SerialiseToSocket wrote %d of %d bytes bStreamSocket:%v", numWritten, len(packet), bStreamSocket )
   if err != nil { return retVal,err }
 
   // read success or failure on submission and if we should wait for a response object
@@ -737,7 +763,7 @@ func (s *BaseEvent) SerialiseToString() (string,error) {
 //  strSerialised := payloadHeader + "\n" + string(s.part1Json) + "\n" + string(s.part2Json) + "\n" + string(s.sysParamsJson) + "\n" + string(s.execParamsJson)
   strSerialised := payloadHeader + string(s.part1Json) + string(s.part2Json) + string(s.sysParamsJson) + string(s.execParamsJson)
 
-  appLogger.Log.Print( "BaseEvent SerialiseToString:", strSerialised )
+  Log.Print( "BaseEvent SerialiseToString:", strSerialised )
   return strSerialised,nil;
 } // BaseEvent serialiseToString
 
@@ -798,7 +824,7 @@ func (s *BaseEvent) ParseBody( body []byte, parseAll bool ) error {
     } // else parseAll
   } // if
 
-  appLogger.Log.Printf( "parseBody: sections:%d part1Size:%d part2Size:%d sysSize:%d execSize:%d",numSections,part1Size,part2Size,sysSize,execSize )
+  Log.Printf( "parseBody: sections:%d part1Size:%d part2Size:%d sysSize:%d execSize:%d",numSections,part1Size,part2Size,sysSize,execSize )
   return nil
 } // BaseEvent parseBody
 
@@ -835,7 +861,7 @@ func ReadGreeting( conn net.Conn ) error {
 
   // verify the protocol version
   if string(pver) != "3.0" { return errors.New( fmt.Sprintf( "ReadGreeting only support pver 3.0 not %s", pver ) ) }
-  appLogger.Log.Printf( "info ReadGreeting pver:%s md:%s", pver, md )
+  Log.Printf( "info ReadGreeting pver:%s md:%s", pver, md )
 
   return nil
 } // BaseEvent ReadGreeting
@@ -846,7 +872,7 @@ func ReadGreeting( conn net.Conn ) error {
  * **/
 func (s *BaseEvent) readReply( conn net.Conn ) (int,error) {
   reply,err := UnSerialiseFromSocket( conn, true )
-  if err != nil { appLogger.Log.Print( "WARN readReply reply:", reply, " err:", err ) }
+  if err != nil { Log.Print( "WARN readReply reply:", reply, " err:", err ) }
   if err != nil { return 0, err }
 
   retVal := 1
@@ -939,13 +965,17 @@ func (s *BaseEvent) Error() string {
 
 /**
  * unserialise from a socket
- * on stream sockets the greeting has to be read after connecting - user ReadGreeting
+ * on stream sockets the greeting has to be read after connecting - use ReadGreeting
  * **/
-func UnSerialiseFromSocket( conn net.Conn, parseAll bool ) (*BaseEvent,error) {
+func UnSerialiseFromSocket( conn io.Reader, parseAll bool ) (*BaseEvent,error) {
   // read the frame header #frameNewframe#v3.0:000441\n
   frameHeader := make( []byte, FRAME_HEADER_LEN, FRAME_HEADER_LEN )
   numRead,err := conn.Read( frameHeader )
-  if numRead != FRAME_HEADER_LEN { return nil,errors.New( fmt.Sprintf( "UnSerialiseFromSocket failed read %d bytes frameHeader:%s - %s", numRead, string(frameHeader), err ) ) }
+  if numRead != FRAME_HEADER_LEN {
+    if err == nil { err = errors.New( "" ) }
+    Log.Printf( "WARN UnSerialiseFromSocket failed read %d bytes frameHeader:%s - %s", numRead, string(frameHeader), err )
+    return nil,err
+  } // if
 
   // verify protocol version and extract payload length
   var packetLen int
@@ -959,20 +989,21 @@ func UnSerialiseFromSocket( conn net.Conn, parseAll bool ) (*BaseEvent,error) {
   totalBytesRead := 0
   err = nil
   packet := make( []byte, packetLen, packetLen )
-  appLogger.Log.Printf( "debug UnSerialiseFromSocket trying to read %d bytes", packetLen )
+  Log.Printf( "debug UnSerialiseFromSocket trying to read %d bytes", packetLen )
   for (err==nil) && (totalBytesRead<packetLen) {
     partPacket := packet[totalBytesRead:]
     numRead,err = conn.Read( partPacket )
     totalBytesRead += numRead
     if Verbose {
-      appLogger.Log.Print( "debug UnSerialiseFromSocket packetLen:", packetLen, " totalBytesRead:", totalBytesRead," numRead:", numRead, " partPacket:", string(partPacket), " packet:", string(packet), " err:", err )
+      Log.Print( "debug UnSerialiseFromSocket packetLen:", packetLen, " totalBytesRead:", totalBytesRead," numRead:", numRead, " partPacket:", string(partPacket), " packet:", string(packet), " err:", err )
     } else {
-      appLogger.Log.Print( "debug UnSerialiseFromSocket packetLen:", packetLen, " totalBytesRead:", totalBytesRead," numRead:", numRead, " err:", err )
+      Log.Print( "debug UnSerialiseFromSocket packetLen:", packetLen, " totalBytesRead:", totalBytesRead," numRead:", numRead, " err:", err )
     } // else
   } // for
   if totalBytesRead < packetLen  {
-    newErr := errors.New( fmt.Sprint( "UnSerialiseFromSocket error reading packet - expected ", packetLen, " bytes, got ", totalBytesRead, " - " + err.Error() ) )
-    return nil,newErr
+    if err == nil { err = errors.New( "" ) }
+    Log.Print( "WARN UnSerialiseFromSocket error reading packet - expected ", packetLen, " bytes, got ", totalBytesRead, " - " + err.Error() )
+    return nil,err
   } // if
 
   // parse the body
@@ -1144,45 +1175,50 @@ func (c ECommandType) String() string {
  * testing 
  * **/
 func Test() {
-  appLogger.Log.Print( "info  BaseEvent Test entry" )
+  Log.Print( "info  BaseEvent Test entry" )
 
 //  testSubmitTcp()
-//  testTcp()
-  testUd()
+  testTcp()
+//  testUd()
 //  testSerFile()
 //  testSerStr()
 
-  appLogger.Log.Print( "info  BaseEvent Test exit" )
+  Log.Print( "info  BaseEvent Test exit" )
 } // test
 
 func testTcp() {
-  conn,err := net.Dial( "tcp", "localhost:txproc" )
+//  txProcAddr := "localhost:txproc"
+  txProcAddr := "gerhardustoets.vts.int:271"
+//  url := "http://localhost/t.php"
+  url := "http://gerhardustoets.vts.int/t.php"
+
+  conn,err := net.Dial( "tcp", txProcAddr )
   if err != nil {
-    appLogger.Log.Print( "WARN testTcp Dial error:", err )
+    Log.Print( "WARN testTcp Dial error:", err )
     return
   } // if err
   defer conn.Close()
 
   err = ReadGreeting( conn )
   if err != nil {
-    appLogger.Log.Print( "WARN testTcp ReadGreeting error:", err )
+    Log.Print( "WARN testTcp ReadGreeting error:", err )
     return
   } // if err
 
   event,err := NewBaseEvent( EV_URL )
-  if err != nil { appLogger.Log.Print( "WARN testTcp new error:", err ); return }
+  if err != nil { Log.Print( "WARN testTcp new error:", err ); return }
   event.SetDestQueue( "default" )
-  event.SetUrl( "http://localhost/t.php" )
+  event.SetUrl( url )
   event.SetReturnFd("0")                            // indicate that we will be waiting for the result
-  appLogger.Log.Print( "info  BaseEvent testTcp serialising event:", event )
+  Log.Print( "info  BaseEvent testTcp serialising event:", event )
   result,err := event.SerialiseToSocket( conn )
-  if err != nil { appLogger.Log.Print( "WARN testTcp SerialiseToSocket error:", err ); return }
+  if err != nil { Log.Print( "WARN testTcp SerialiseToSocket error:", err ); return }
   if result == RESULT_RESPONSE {
     response,err := UnSerialiseFromSocket( conn, true )
-    if err != nil { appLogger.Log.Print( "WARN testTcp response UnSerialiseFromSocket error:", err ); return }
-    appLogger.Log.Print( "info  BaseEvent testTcp reponse:", response.String() )
+    if err != nil { Log.Print( "WARN testTcp response UnSerialiseFromSocket error:", err ); return }
+    Log.Print( "info  BaseEvent testTcp reponse:", response.String() )
   } else {
-    appLogger.Log.Print( "info  BaseEvent testTcp submitted successfully" )
+    Log.Print( "info  BaseEvent testTcp submitted successfully" )
   } // else
 } // testTcp
 
@@ -1191,25 +1227,25 @@ func testUd() {
 //  conn,err := net.DialUnix( "unixgram", nil, rAddr )
   conn,err := net.Dial( "unixgram", "/var/log/txProc/txProc.sock" )
   if err != nil {
-    appLogger.Log.Print( "WARN testUd Dial error:", err )
+    Log.Print( "WARN testUd Dial error:", err )
     return
   } // if err
   defer conn.Close()
 
   event,err := NewBaseEvent( EV_URL )
-  if err != nil { appLogger.Log.Print( "WARN testUd new error:", err ); return }
+  if err != nil { Log.Print( "WARN testUd new error:", err ); return }
   event.SetDestQueue( "default" )
   event.SetUrl( "http://localhost/t.php" )
-  appLogger.Log.Print( "info  BaseEvent testUd serialising event:", event )
+  Log.Print( "info  BaseEvent testUd serialising event:", event )
   _,err = event.SerialiseToSocket( conn )
-  if err != nil { appLogger.Log.Print( "WARN testUd SerialiseToSocket error:", err ); return }
+  if err != nil { Log.Print( "WARN testUd SerialiseToSocket error:", err ); return }
 } // testUd
 
 func testSerFile() {
   event,err := UnSerialiseFromFile( "/home/gerhardus/temp/r000329_gqwAs1", true )
-  appLogger.Log.Printf( "debug testSerFile event:%s", event.String() )
+  Log.Printf( "debug testSerFile event:%s", event.String() )
   err = event.SerialiseToFile( "/home/gerhardus/temp/r000329_gqwAs1.new" )
-  if err != nil { appLogger.Log.Print( "WARN SerialiseToFile error:", err ) }
+  if err != nil { Log.Print( "WARN SerialiseToFile error:", err ) }
 } // testSerFile
 
 func testSerStr() {
@@ -1217,16 +1253,16 @@ func testSerStr() {
   var err error
   packet := "#frameNewframe#v3.0:000126\n04,1,000042,1,000000,1,000014,1,000031\n{\"eventType\":8,\"reference\":\"25841-17091\"}\n{\"command\":1}\n{\"time\":\"2013-08-29 05:20:29\"}\n"
   if event,err = UnSerialiseFromString( []byte(packet), true ); err!=nil {
-    appLogger.Log.Print( "WARN testSerStr unserialise error:", err )
+    Log.Print( "WARN testSerStr unserialise error:", err )
   } // if
 
   var strEvent string
   if strEvent,err = event.SerialiseToString(); err!=nil {
-    appLogger.Log.Print( "WARN testSerStr serialise error:", err )
+    Log.Print( "WARN testSerStr serialise error:", err )
   } // if
-  appLogger.Log.Printf( "debug testSerStr String() event:%s", event.String() )
-  appLogger.Log.Printf( "debug testSerStr len:%d   packet:'%s'", len(packet), packet )
-  appLogger.Log.Printf( "debug testSerStr len:%d strEvent:'%s'", len(strEvent), strEvent )
+  Log.Printf( "debug testSerStr String() event:%s", event.String() )
+  Log.Printf( "debug testSerStr len:%d   packet:'%s'", len(packet), packet )
+  Log.Printf( "debug testSerStr len:%d strEvent:'%s'", len(strEvent), strEvent )
 } // testSerStr
 
 /**

@@ -4,6 +4,7 @@
  $Id: network.cpp 2629 2012-10-19 16:52:17Z gerhardus $
  Versioning: a.b.c a is a major release, b represents changes or new features, c represents bug fixes. 
  @version 1.0.0		04/09/2012		Gerhardus Muller		Script created
+ @version 1.0.1		20/05/2014		Gerhardus Muller		acceptUnSocket used the datagram fd
 
  @note
 
@@ -269,8 +270,7 @@ int network::acceptUnSocket( )
   struct sockaddr_un  un;
   
   len = sizeof( un );
-  //log.debug( log.LOGNORMAL, "acceptUnSocket struct len %d", len );
-  while( ((fd = accept(listenUnFd,(struct sockaddr *)&un,&len)) < 0) && (errno == EINTR) );
+  while( ((fd = accept(listenUnStreamFd,(struct sockaddr *)&un,&len)) < 0) && (errno == EINTR) );
   if( fd < 0 ) throw Exception( log, log.ERROR, "acceptUnSocket accept error: %s", strerror(errno) );
 
   return fd;

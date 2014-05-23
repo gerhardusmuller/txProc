@@ -1,3 +1,5 @@
 *.o
 *.d
+*.swp
 txProc
+go/exampleApp/exampleApp

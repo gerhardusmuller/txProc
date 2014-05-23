@@ -64,6 +64,8 @@ type AppBase struct {
   srcIdCounter            int                   // used to generate sequential ids if more sources inject events into the eventSrc channel
   txProcSocket            *net.UnixConn         // UD datagram socket to txProc
   txProcStreamSocket      *net.UnixConn         // UD stream socket to txProc
+  localDgramPath          string
+  localStreamPath         string
 } // type AppBase struct
 
 const ID_STDIO = 0                              // id for events from stdio
@@ -112,32 +114,41 @@ func (s *AppBase) GetNextEventSrcId() int {
  * error should be nil for success
  * **/
 func (s *AppBase) CreateTxProcSocket( datagramPath, streamPath string, bAppendPid bool ) error {
-  localDgramPath := s.logDir + s.appName 
-  if bAppendPid { localDgramPath += "." + strconv.FormatInt( int64(os.Getpid()), 10 ) }
-  localDgramPath += ".sock";
-  localStreamPath := s.logDir + s.appName 
-  if bAppendPid { localStreamPath += "." + strconv.FormatInt( int64(os.Getpid()), 10 ) }
-  localStreamPath += "stream.sock";
+  s.localDgramPath = s.logDir + s.appName 
+  if bAppendPid { s.localDgramPath += "." + strconv.FormatInt( int64(os.Getpid()), 10 ) }
+  s.localDgramPath += ".sock";
+  s.localStreamPath = s.logDir + s.appName 
+  if bAppendPid { s.localStreamPath += "." + strconv.FormatInt( int64(os.Getpid()), 10 ) }
+  s.localStreamPath += ".stream.sock";
 
   rDgramAddr := net.UnixAddr{datagramPath,"unixgram"}
-  lDgramAddr := net.UnixAddr{localDgramPath,"unixgram"}
+  lDgramAddr := net.UnixAddr{s.localDgramPath,"unixgram"}
   rStreamAddr := net.UnixAddr{streamPath,"unix"}
-  lStreamAddr := net.UnixAddr{localStreamPath,"unix"}
+  lStreamAddr := net.UnixAddr{s.localStreamPath,"unix"}
 
   var err error
   if s.txProcSocket,err = net.DialUnix("unixgram", &lDgramAddr, &rDgramAddr); err != nil {
-    Log.Print( "WARN AppBase::createTxProcSocket failed to dial unixgram local:",localDgramPath," remote:",datagramPath," err:",err )
+    Log.Print( "WARN AppBase::createTxProcSocket failed to dial unixgram local:",s.localDgramPath," remote:",datagramPath," err:",err )
     return err
   } // if
   if s.txProcStreamSocket,err = net.DialUnix("unix", &lStreamAddr, &rStreamAddr); err != nil {
-    Log.Print( "WARN AppBase::createTxProcSocket failed to dial unix local:",localStreamPath," remote:",streamPath," err:",err )
+    Log.Print( "WARN AppBase::createTxProcSocket failed to dial unix local:",s.localStreamPath," remote:",streamPath," err:",err )
     return err
   } // if
 
-  Log.Print( "info  AppBase::createTxProcSocket unixgram local:",localStreamPath," remote:",streamPath," unixstream local:",localStreamPath," remote:",streamPath )
+  Log.Print( "info  AppBase::createTxProcSocket unixgram local:",s.localStreamPath," remote:",streamPath," unixstream local:",s.localStreamPath," remote:",streamPath )
   return nil
 } // AppBase::createTxProcSocket
 
+/**
+ * deletes the sockets
+ * **/
+func (s *AppBase) CleanupTxProcSocket() {
+  s.txProcSocket.Close()
+  s.txProcStreamSocket.Close()
+  os.Remove( s.localDgramPath )
+  os.Remove( s.localStreamPath )
+} // AppBase::CleanupTxProcSocket
 
 /**
  * interfaces - can be implemented by an object

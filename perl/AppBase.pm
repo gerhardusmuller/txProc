@@ -15,6 +15,8 @@
 # @version 1.7.0    22/10/2012    Gerhardus Muller    support to suppress the main loop waiting message in verbose mode
 # @version 1.8.0    25/04/2013    Gerhardus Muller    socket error reporting in createTxProcSocket changed to use $!
 # @version 1.9.0    13/05/2013    Gerhardus Muller    changed AppBase logging string for consistency
+# @version 1.10.0   25/08/2014    Gerhardus Muller    stub execRegularTasks did not return undef
+# @version 1.10.1		07/11/2014		Gerhardus Muller		changed INFO to info in log statements
 #
 # perl -MCPAN -e "install IO::Handle, IO::Select, IO::Socket, Date::Manip::Date, Date::Manip::Delta"
 #
@@ -84,9 +86,9 @@ sub openAppLog
   } # if
 
   LOGFILE->autoflush(1) if($this->{bFlushLogs});
-  print LOGFILE "\n$timestamp INFO AppBase::openAppLog: application started, frozen:$this->{bFrozen}\n" if(!$bReopen);
-  print LOGFILE "$timestamp INFO AppBase::openAppLog: log reopened, frozen:$this->{bFrozen}\n" if($bReopen);
-  print LOGFILE "$timestamp INFO AppBase::openAppLog: buildString:$this->{buildString}\n" if(defined($this->{buildString}));
+  print LOGFILE "\n$timestamp info  AppBase::openAppLog: application started, frozen:$this->{bFrozen}\n" if(!$bReopen);
+  print LOGFILE "$timestamp info  AppBase::openAppLog: log reopened, frozen:$this->{bFrozen}\n" if($bReopen);
+  print LOGFILE "$timestamp info  AppBase::openAppLog: buildString:$this->{buildString}\n" if(defined($this->{buildString}));
 } # sub openAppLog
 
 #######
@@ -152,7 +154,7 @@ sub createTxProcSocket
     $bindRes = "failed:$1" if(!defined($bindRes));
     $txProcTcpAddr = '' if(!defined($txProcTcpAddr));
     $txProcTcpService = '' if(!defined($txProcTcpService));
-    print LOGFILE "$timestamp INFO AppBase::createTxProcSocket localName:$localName peer:$txProcUdSocketPath fallback TCP addr:$txProcTcpAddr service:$txProcTcpService bindRes:$bindRes\n";
+    print LOGFILE "$timestamp info  AppBase::createTxProcSocket localName:$localName peer:$txProcUdSocketPath fallback TCP addr:$txProcTcpAddr service:$txProcTcpService bindRes:$bindRes\n";
     return 1;
   } # else
 } # createTxProcSocket
@@ -168,7 +170,7 @@ sub run
     $this->checkDateChanges() if( $this->{bCheckDateChanges} );
     $this->startLoopProcess();
 
-    print LOGFILE "$timestamp INFO AppBase::run waiting for new packet/event frozen:$this->{bFrozen}\n" if($this->{bMainLoopVerbose});
+    print LOGFILE "$timestamp info  AppBase::run waiting for new packet/event frozen:$this->{bFrozen}\n" if($this->{bMainLoopVerbose});
 
     my @ready;
     my @extraEvents;
@@ -184,7 +186,7 @@ sub run
         {
           if( $this->{stdio}->eof() )
           {
-            print LOGFILE "$timestamp INFO AppBase::run stdio eof\n";
+            print LOGFILE "$timestamp info  AppBase::run stdio eof\n";
             $this->{bTimeToDie} = 1;
           } # if
           else
@@ -306,7 +308,7 @@ sub run
             } # if
             else
             {
-              print LOGFILE "$timestamp INFO AppBase::run submitted to txProc:".$event->toString()."\n" if($this->{beVerbose});
+              print LOGFILE "$timestamp info  AppBase::run submitted to txProc:".$event->toString()."\n" if($this->{beVerbose});
             } # else
           } # else EV_BASE
         } # while shift extraEvents
@@ -318,7 +320,7 @@ sub run
 
 ######
 ######
-# callbacks that can be overridden a the derived class
+# callbacks that can be overridden in a the derived class
 ######
 
 ######
@@ -334,6 +336,7 @@ sub startLoopProcess
 sub execRegularTasks
 {
   my ($this) = @_;
+  return undef;
 } # sub execRegularTasks
 
 ######
@@ -357,7 +360,7 @@ sub handleNewEvent
   my ($this,$event) = @_;
   my $newEvents;
 
-  print LOGFILE "$timestamp INFO AppBase::handleNewEvent:'".$event->toString."'\n" if($this->{beVerbose});
+  print LOGFILE "$timestamp info  AppBase::handleNewEvent:'".$event->toString."'\n" if($this->{beVerbose});
   if( $event->eventType() eq 'EV_COMMAND' )
   {
     $newEvents = $this->handleEvCommand( $event );
@@ -435,7 +438,7 @@ sub handleUnhandledCmdEvents
 {
   my ($this,$event) = @_;
   my $newEvents;
-  print LOGFILE "$timestamp INFO AppBase::handleUnhandledCmdEvents: unable to handle command:".$event->command()."\n";
+  print LOGFILE "$timestamp info  AppBase::handleUnhandledCmdEvents: unable to handle command:".$event->command()."\n";
 
   return $newEvents;
 } # sub handleUnhandledCmdEvents
@@ -456,24 +459,24 @@ sub handlePersistentCommand
   elsif( $cmd eq "stop" )
   {
     $this->{bFrozen} = 1;
-    print LOGFILE "$timestamp INFO AppBase::handlePersistentCommand: freezing execution\n";
+    print LOGFILE "$timestamp info  AppBase::handlePersistentCommand: freezing execution\n";
   } # elsif stop
   elsif( $cmd eq "start" )
   {
     $this->{bFrozen} = 0;
-    print LOGFILE "$timestamp INFO AppBase::handlePersistentCommand: unfreezing execution\n";
+    print LOGFILE "$timestamp info  AppBase::handlePersistentCommand: unfreezing execution\n";
   } # if start
   elsif( $cmd eq "exit" )
   {
     $this->{bTimeToDie} = 1;
     $newEvents = $this->prepareToExit( $event );
-    print LOGFILE "$timestamp INFO AppBase::handlePersistentCommand: exiting\n";
+    print LOGFILE "$timestamp info  AppBase::handlePersistentCommand: exiting\n";
   } # if exit
   elsif( $cmd eq "startupinfo" )
   {
     $this->{ownQueue} = $event->getParam('ownqueue');
     $this->{workerPid} = $event->getParam('workerpid');
-    print LOGFILE "$timestamp INFO AppBase::handlePersistentCommand: ownQueue:$this->{ownQueue} workerPid:$this->{workerPid}\n";
+    print LOGFILE "$timestamp info  AppBase::handlePersistentCommand: ownQueue:$this->{ownQueue} workerPid:$this->{workerPid}\n";
   } # if exit
   else
   {
@@ -667,7 +670,7 @@ sub checkDateChanges
 {
   my ($this) = @_;
   $this->{date} = new Date::Manip::Date if(!exists($this->{date})); 
-  $this->{date}->secs_since_1970_GMT( $epochSecs );
+  $this->{date}->secs_since_1970_GMT( $epochSecs ); # sets the date to $secs seconds from Jan 1, 1970 00:00:00 GMT in the local time zone
   $this->{dateStringNow} = $this->{date}->printf('%Y-%m-%d %H:%M:%S');
   my @vals = $this->{date}->value();    # 2010,11,16,20,10,5
   my $newMonth = $vals[1];
@@ -677,25 +680,25 @@ sub checkDateChanges
 
   if( $newMinute != $this->{curMinute} )
   {
-    print LOGFILE "$timestamp INFO checkDateChanges: curMinute:$this->{curMinute} newMinute:$newMinute\n";
+    print LOGFILE "$timestamp info  checkDateChanges: curMinute:$this->{curMinute} newMinute:$newMinute\n";
     $this->{curMinute} = $newMinute;
     $this->{bRunMinutely} = 1 if( !$this->{bDateRunSkipZero} || ($this->{curMinute} != 0) );
   } # if
   if( $newHour != $this->{curHour} )
   {
-    print LOGFILE "$timestamp INFO checkDateChanges: curHour:$this->{curHour} newHour:$newHour\n";
+    print LOGFILE "$timestamp info  checkDateChanges: curHour:$this->{curHour} newHour:$newHour\n";
     $this->{curHour} = $newHour;
     $this->{bRunHourly} = 1 if( !$this->{bDateRunSkipZero} || ($this->{curHour} != 0) );
   } # if
   if( $newDay != $this->{curDay} )
   {
-    print LOGFILE "$timestamp INFO checkDateChanges: curDay:$this->{curDay} newDay:$newDay\n";
+    print LOGFILE "$timestamp info  checkDateChanges: curDay:$this->{curDay} newDay:$newDay\n";
     $this->{curDay} = $newDay;
     $this->{bRunDaily} = 1 if( !$this->{bDateRunSkipZero} || ($this->{curDay} != 0) );
   } # if
   if( $newMonth != $this->{curMonth} )
   {
-    print LOGFILE "$timestamp INFO checkDateChanges: curMonth:$this->{curMonth} newMonth:$newMonth\n";
+    print LOGFILE "$timestamp info  checkDateChanges: curMonth:$this->{curMonth} newMonth:$newMonth\n";
     $this->{curMonth} = $newMonth;
     $this->{bRunMonthly} = 1;
   } # if

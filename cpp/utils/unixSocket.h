@@ -45,6 +45,7 @@ class unixSocket : public object
   std::streamsize read(char* s, std::streamsize n);
   std::streamsize write(const char* s, std::streamsize n);
   static std::streamsize writeOnce( int fd, const std::string& s, bool bPipe=false );
+  static std::streamsize writeOnceTo( int fd, const std::string& s, const std::string& dest );
   void setCloseOnExec( bool bSet );
   void setNonblocking( );
   void setNoSigPipe( );

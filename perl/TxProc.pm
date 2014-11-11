@@ -1,6 +1,5 @@
 # txProc interface class - mirrors the C++ baseEvent class
 #
-# $Id: TxProc.pm 2946 2013-12-10 10:00:08Z gerhardus $
 # Gerhardus Muller
 # Versioning: a.b.c a is a major release, b represents changes or new features, c represents bug fixes. 
 # @version 1.0.0		20/11/2009		Gerhardus Muller		implements txProc version 3 protocol base on Json
@@ -17,6 +16,8 @@
 # @version 1.8.0		20/07/2013		Gerhardus Muller		switched to the UTF-8 versions encode_json and decode_json
 # @version 1.9.0		18/10/2013		Gerhardus Muller		changed bExpectReply to return a normal 0/1 rather than a JSON::XS::TRUE
 # @version 1.10.0		26/11/2013		Gerhardus Muller		fixed unserialise to handle fragmented packets
+# @version 1.10.1		05/11/2014		Gerhardus Muller		for consistency prependScriptParam should check if execParams is still a HASH
+# @version 1.10.2		07/11/2014		Gerhardus Muller		changed INFO to info in log statements
 #
 # perl -MCPAN -e "install JSON::XS"
 #
@@ -34,7 +35,6 @@ my $FRAME_HEADER = '#frameNewframe#v';
 my $PROTOCOL_VERSION_NUMBER = '3.0';
 my $FRAME_HEADER_LEN = 27; # strlen(FRAME_HEADER)+strlen(PROTOCOL_VERSION_NUMBER)+8 - the 8 is ':%06u\n'
 my $BLOCK_HEADER_LEN = 39;
-#our $READ_BUF_SIZE = 4096;
 our $READ_BUF_SIZE = 32768;
 our $MAX_HEADER_BLOCK_LEN = 999999;   # corresponds to %06d
 our $defaultVerboseSetting = 0;
@@ -450,6 +450,7 @@ sub addScriptParam
 sub prependScriptParam
 {
   my ($this,$val) = @_;
+  $this->{execParams} = [] if( ref($this->{execParams}) eq "HASH" ); # default init is for a hash
   unshift @{$this->{execParams}}, $val;
 } # prependScriptParam
 # @param the index of the entry to retrieve
@@ -597,7 +598,6 @@ sub serialiseExecParams
 sub serialiseToString
 {
   my ($this) = @_;
-  my $objStr = '';
   my $jsonPart1 = $this->serialisePart1();
   my $jsonPart2 = $this->serialisePart2();
   my $jsonSysParams = $this->serialiseSysParams();
@@ -686,12 +686,11 @@ sub parseBody
     return (0,"TxProc::parseBody: failed to parse body header:'$body'");
   } # else
 
-  print( LOGFILE "$timestamp INFO TxProc::parseBody: part1Size:$part1Size part2Size:$part2Size sysSize:$sysSize execSize:$execSize\nbody:'$body'\n" ) if( $this->{beVerbose} );
+  print( LOGFILE "$timestamp info  TxProc::parseBody: part1Size:$part1Size part2Size:$part2Size sysSize:$sysSize execSize:$execSize\nbody:'$body'\n" ) if( $this->{beVerbose} );
   my $startOffset = $BLOCK_HEADER_LEN;
 
   my $jsonPart1 = substr( $body, $startOffset, $part1Size );
   $startOffset += $part1Size;
-#  $this->{part1} = from_json( $jsonPart1 );
   $this->{part1} = $this->{json}->decode( $jsonPart1 );
   $this->{eventType} = $this->{part1}->{eventType};
 
@@ -699,7 +698,6 @@ sub parseBody
   {
     my $jsonPart2 = substr( $body, $startOffset, $part2Size );
     $startOffset += $part2Size;
-#    $this->{part2} = from_json( $jsonPart2 );
     $this->{part2} = $this->{json}->decode( $jsonPart2 );
   } # if
 
@@ -707,7 +705,6 @@ sub parseBody
   {
     my $jsonSysParams = substr( $body, $startOffset, $sysSize );
     $startOffset += $sysSize;
-#    $this->{sysParams} = from_json( $jsonSysParams );
     $this->{sysParams} = $this->{json}->decode( $jsonSysParams );
   } # if
 
@@ -743,7 +740,7 @@ sub unSerialiseFromString
   } # if
   else
   {
-    return (0, "TxProc::unSerialise failed to parse the header:'$header'" );
+    return (0, "TxProc::unSerialiseFromString failed to parse the header:'$header'" );
   } # else
 
   # read the body
@@ -816,7 +813,7 @@ sub serialise
   # serialise and get the actual payload
   my $payload = $this->serialiseToString();
   my $payloadLen = length( $payload );
-  print( LOGFILE "$timestamp INFO TxProc::serialise: len:$payloadLen '$payload'\n" ) if($this->{beVerbose});
+  print( LOGFILE "$timestamp info  TxProc::serialise: len:$payloadLen '$payload'\n" ) if($this->{beVerbose});
 
   # check max length we can receive via unix domain socket
   if( defined($unixdomainPath) && ($payloadLen >= $READ_BUF_SIZE) )
@@ -824,11 +821,11 @@ sub serialise
     if( defined($serverName) && defined($serverService) )
     {
       undef $unixdomainPath;
-      print( LOGFILE "$timestamp INFO TxProc::serialise: len:$payloadLen exceeds max len:$READ_BUF_SIZE using TCP server:($serverName service:$serverService\n" );
+      print( LOGFILE "$timestamp info  TxProc::serialise: len:$payloadLen exceeds max len:$READ_BUF_SIZE using TCP server:($serverName service:$serverService\n" );
     } # if
     else
     {
-      print( LOGFILE "$timestamp INFO TxProc::serialise len:$payloadLen exceeds max len:$READ_BUF_SIZE - no TCP server" );
+      print( LOGFILE "$timestamp info  TxProc::serialise len:$payloadLen exceeds max len:$READ_BUF_SIZE - no TCP server" );
       return( 0, "TxProc::serialise len:$payloadLen exceeds max len:$READ_BUF_SIZE - no TCP server" );
     } # else
   } # if

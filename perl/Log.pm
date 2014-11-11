@@ -47,7 +47,6 @@ sub generateTimestamp
 } # generateTimestamp
 
 # open the log and generate a date stamp
-# redirects stderr to the log as well
 # @param $logFile - if stderr then duplicate the STDERR handle
 # @return LOGFILE, timestamp, $bSuccess
 sub openLog

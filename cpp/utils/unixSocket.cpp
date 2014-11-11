@@ -11,6 +11,7 @@
  @version 1.5.0		07/05/2013		Gerhardus Muller		added displaying the system error on socketpair failing
  @version 1.6.0		04/06/2013		Gerhardus Muller		changed the loglevel in multiFdWaitForEvent
  @version 1.7.0		05/06/2013		Gerhardus Muller		added the FD_CLOEXEC flag to the socketpair call; added setCloseOnExec
+ @version 1.8.0		06/08/2014		Gerhardus Muller		added writeOnceTo
 
  @note
 
@@ -26,6 +27,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h> 
+#include <sys/un.h>
 #include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -377,11 +379,50 @@ std::streamsize unixSocket::writeOnce( int fd, const std::string& s, bool bPipe 
   } // if( bytesSent
   else
   {
-    if( pStaticLogger->wouldLog( pStaticLogger->LOGSELDOM ) ) pStaticLogger->debug( pStaticLogger->LOGONOCCASION ) << "fd:" << fd << " write len " << s.length() << " bytesSent " << bytesSent << " data:'" << s << "'";
-    else if( pStaticLogger->wouldLog( pStaticLogger->LEVEL8 ) ) pStaticLogger->debug( pStaticLogger->MIDLEVEL, "fd:%d write len %d bytesSent %d", fd, s.length(), bytesSent );
+    if( pStaticLogger->wouldLog( pStaticLogger->LOGSELDOM ) ) pStaticLogger->debug( pStaticLogger->LOGONOCCASION ) << "writeOnce fd:" << fd << " write len " << s.length() << " bytesSent " << bytesSent << " data:'" << s << "'";
+    else if( pStaticLogger->wouldLog( pStaticLogger->LEVEL8 ) ) pStaticLogger->debug( pStaticLogger->MIDLEVEL, "writeOnce fd:%d write len %d bytesSent %d", fd, s.length(), bytesSent );
     return bytesSent;
   } // else
 } // writeOnce
+
+/**
+ * unix domain datagram interface capable of sending on an unconnected socket
+ * @param fd - the socket fd to use
+ * @param s - is the input buffer
+ * @param dest - unix domain path / destination address - if empty the socket has to be connected
+ *
+ * @return - the number of bytes sent or -1 for error
+ * **/
+std::streamsize unixSocket::writeOnceTo( int fd, const std::string& s, const std::string& dest )
+{
+  int bytesSent = 0;
+  do
+  {
+    if( !dest.empty() )
+    {
+      struct sockaddr_un servAddr;
+      memset( &servAddr, 0, sizeof(servAddr) );
+      servAddr.sun_family = AF_LOCAL;
+      strcpy( servAddr.sun_path, dest.c_str() );
+      bytesSent = sendto( fd, s.c_str(), s.length(), 0, (const sockaddr*)&servAddr, sizeof(servAddr) );
+    } // if
+    else
+      bytesSent = send( fd, s.c_str(), s.length(), 0 ); // block the SIGPIPE signal - will receive a EPIPE error on socket closure by the remote end 
+  }
+  while( ( bytesSent  == -1 ) && ( errno == EINTR ) );
+  if( bytesSent == -1 )
+  {
+    pStaticLogger->info( loggerDefs::LOGMOSTLY, "writeOnceTo error on fd %d - %s", fd, strerror(errno) );
+    return -1;
+  } // if( bytesSent
+  else
+  {
+    if( pStaticLogger->wouldLog( pStaticLogger->LEVEL8 ) ) pStaticLogger->debug( pStaticLogger->MIDLEVEL, "writeOnceTo fd:%d write len %d bytesSent %d", fd, s.length(), bytesSent );
+    return bytesSent;
+  } // else
+
+  return bytesSent;
+} // writeOnceTo
 
 /**
  Sets the FD_CLOEXEC file descriptor flag on the socket

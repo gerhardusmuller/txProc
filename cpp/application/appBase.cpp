@@ -581,6 +581,7 @@ void appBase::sendDone()
 {
   if( pResultEvent == NULL )
   {
+    log.debug( log.LOGNORMAL, "sendDone: pResultEvent==NULL - creating one" );
     pResultEvent = new baseEvent( baseEvent::EV_RESULT );
     pResultEvent->setSuccess( true );
   }

@@ -3,3 +3,4 @@
 *.swp
 txProc
 go/exampleApp/exampleApp
+__pycache__

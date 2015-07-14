@@ -14,7 +14,7 @@ LIBPATHS  :=
 BOOSTLIBS := -lboost_program_options -lboost_regex
 #JSONLIBS  := -ljson_linux-gcc-4.3_libmt
 #LIBPATHS := -L/opt/local/lib
-JSONLIBS  := -ljson_linux
+#JSONLIBS  := -ljson_linux
 
 -include $(ROOT)/makefile.init
 
@@ -30,9 +30,9 @@ BUILDTIME_FILE := ../buildtime.h
 #EXTRA_FLAGS := -DPPOLL_NOT_AVAILABLE
 -include platform.mak
 
-EXTRA_LIBS := $(LIBPATHS) $(BOOSTLIBS) -lcurlpp -lcurl -lpthread $(JSONLIBS)
+EXTRA_LIBS := $(LIBPATHS) $(BOOSTLIBS) -lcurlpp -lcurl -lpthread 
 
-BUILD_FLAGS := -O0 -g3
+BUILD_FLAGS := -std=c++11 -O0 -g3
 #BUILD_FLAGS := -O2
 CC := g++
 CC_FLAGS := $(BUILD_FLAGS) -Wall -c -MMD -fmessage-length=0 -I$(LIBROOT) -I$(OPTIONS_H) -I$(SRC_H) $(CURLPP_H) $(EXTRA_FLAGS)
@@ -64,6 +64,7 @@ nucleus \
 networkIf \
 logging \
 exception \
+json \
 
 # Include the makefiles for each source subdirectory
 -include ${patsubst %, %/subdir.mk, $(SUBDIRS)}
